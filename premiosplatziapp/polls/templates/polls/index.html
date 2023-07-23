@@ -1,11 +1,11 @@
 {% if latest_question_list %} 
     <ul>
-    {% for question in latest_question_list  %}
-        <li><a href="/polls/{{question.id}}">{{question.question_text }}</a></li>
+    {% for question in latest_question_list  %} {#itera la lista choice y lo muestra en la web #}
+        <li><a href=" {% url 'polls:detail' question.id  %}">{{question.question_text }}</a></li> {#invoca a detail de views.py  #}
         
     {% endfor %}
     </ul>
 
 {% else %}
-    <p>No polls are available.</p>
+    <p>No polls are available.</p> {# si no se encuentra el id de la pregunta retorna #}
 {% endif %}
