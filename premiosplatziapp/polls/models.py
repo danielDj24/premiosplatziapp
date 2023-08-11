@@ -11,8 +11,7 @@ class Question(models.Model): #modelo para las preguntas
         return self.question_text # cada vez  que invoquemos una pregunta, en la consola o codigo, nos suelte el valor
     
     def was_publish_recently(self): #meotodo que retorna true o f si la public se hizo recientemente
-        return self.pub_date >= timezone.now() - datetime.timedelta(days= 1) #restamos al tiempo actual un dia 
-        
+        return timezone.now() >= self.pub_date >= timezone.now() - datetime.timedelta(days= 1) 
     
     
 
