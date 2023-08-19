@@ -1,4 +1,17 @@
 from django.contrib import admin
-from .models import Question, Choice #importamos los modelos que estan dentro de esta carpeta
+from .models import Choice,Question #importamos los modelos que estan dentro de esta carpeta
 
-admin.site.register([Question, Choice]) #con esta linea le decimos al proyecto que vamos a utilizar el modelo desde la web 
+class ChoiceInline(admin.StackedInline):
+    model = Choice
+    extra = 3  
+    
+class QuestionAdmin(admin.ModelAdmin):
+    fields = ["pub_date", "question_text"]
+    inlines = [ChoiceInline]
+    list_display = ("question_text", "pub_date", "was_publish_recently")
+    list_filter = ["pub_date"]
+    search_fields = ["question_text"]
+
+
+
+admin.site.register(Question, QuestionAdmin) #con esta linea le decimos al proyecto que vamos a utilizar el modelo desde la web 

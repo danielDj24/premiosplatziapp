@@ -1,8 +1,24 @@
-<h1>{{question.question_text}}</h1>
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'polls/style.css' %}">
+    <link rel="stylesheet" href="{% static 'polls/results.css' %}">
+    <title>{{question.question_text}}</title>
+</head>
+<body>
+    <h1>{{question.question_text}}</h1>
 <ul>
 {% for choice  in question.choice_set.all  %}
     <li>{{choice.choice_text}} -- {{choice.votes}} vote{{choice.votes|pluralize}}</li> {# muestra la respuesta y la cantidad de votos y agrega una s si se tiene mas de un voto#}
 
 {% endfor %}
 </ul>
-<a href="{% url 'polls/detail' question.id %}">te gustaria votar de nuevo?</a>
+<a href="{% url 'polls:detail' question.id %}">te gustaria votar de nuevo?</a>
+    
+</body>
+</html>
+

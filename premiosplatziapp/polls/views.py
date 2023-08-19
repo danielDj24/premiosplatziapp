@@ -1,10 +1,12 @@
 from typing import Any
+from django.db import models
 from django.db.models.query import QuerySet
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect #permite ejecutar una respuesta http
 from django.urls import reverse #importamos la funcion reverse
 from django.views import generic 
 from django.utils import timezone
+from django.db.models import Count
 
 from .models import Question, Choice #importamos el modelo Question 
 
@@ -26,10 +28,12 @@ class IndexView(generic.ListView):
     
     def get_queryset(self):
         """Return the last five published questions"""
-        return Question.objects.filter(pub_date__lte=timezone.now()).order_by("-pub_date")[:5] #organiza las preguntas desde las mas recientes a las mas antiguas
+        question = Question.objects.filter(pub_date__lte=timezone.now())
+        question = question.alias(entries=Count("choice")).filter(entries__gte=2)
+        return question.order_by("-pub_date")[:5] #organiza las preguntas desde las mas recientes a las mas antiguas
     
 
-'''
+''' 
 def detail(request, question_id) : 
     """details = nos muestra los detalles de la pregunta que escojamos, segun su llaves
         question = obtiene las preguntas o suelta un error 404 segun su pk
@@ -44,8 +48,9 @@ class DetailView(generic.DetailView):
     model = Question
     template_name = "polls/detail.html"#nobre del archivo html
     
-    
-    
+    def get_queryset(self):
+        """exclude any question that aren't published yed"""
+        return Question.objects.filter(pub_date__lte=timezone.now())
 
 '''    
 def results(request,question_id ): #se ejecuta despues de vote
@@ -55,12 +60,13 @@ def results(request,question_id ): #se ejecuta despues de vote
     }  )
 '''    
 class ResultsView(generic.DetailView): 
-    model = Question
-    template_name = "polls/results.html" #nobre del archivo html    
+    template_name = "polls/results.html" #nombre del archivo html    
     
+    def get_queryset(self):
+        return Question.objects.filter(pub_date__lte=timezone.now())
+        
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
-    
     try:
         selected_choice = question.choice_set.get(pk=request.POST['choice'])
     except (KeyError, Choice.DoesNotExist):
@@ -73,3 +79,5 @@ def vote(request, question_id):
         selected_choice.save()
         # ! Es buena práctica hacer redirect después de que el usuario usó un formulario
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+    
+    

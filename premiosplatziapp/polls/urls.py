@@ -14,5 +14,5 @@ urlpatterns = [
     #ex: /polls/8/results/ accede a los resultados de la web
     path("<int:pk>/results/", views.ResultsView.as_view(), name= "results"),#as_view metodo que hace que se muestre la vista
     #ex: /polls/8/vote/ accede a los votos
-    path("<int:pk>/vote/",views.vote, name= "vote")
+    path("<int:question_id>/vote/",views.vote, name= "vote")
 ]
